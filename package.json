@@ -1,7 +1,7 @@
 {
   "name": "blackbird-promises",
   "description": "A fork of bluebird, which is a full featured Promises/A+ implementation with exceptionally good performance",
-  "version": "3.4.6",
+  "version": "0.0.1",
   "keywords": [
     "promise",
     "performance",
