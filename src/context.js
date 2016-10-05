@@ -33,7 +33,7 @@ Promise.prototype._deepContextSetup = function() {
     // console.log("Promise._deepContextSetup");
     var runningPromise = dc_peek();
     if (runningPromise) {
-        console.log("_deepContextSetup passing COPY instruction");
+        // console.log("_deepContextSetup: passing COPY instruction");
         this._dc_shouldCopy = runningPromise;
     }
 };
@@ -42,11 +42,11 @@ Promise.prototype._deepContextSetup = function() {
 Promise.prototype._deepContextPass = function(other) {
     delete other._dc_shouldCopy;
     if (this._dc) {
-        console.log("_deepContextPass passing context", this._dc);
+        // console.log("_deepContextPass: passing context", this._dc);
         other._dc = this._dc;
     } else {
         other._dc_shouldInherit = this;
-        console.log("_deepContextPass passing INHERIT instruction");
+        // console.log("_deepContextPass: passing INHERIT instruction");
     }
 };
 
@@ -65,15 +65,16 @@ function dc_resolve(pr) {
     if(pr._dc_shouldInherit) {
         pr._dc = dc_resolve(pr._dc_shouldInherit);
         delete pr._dc_shouldInherit;
+        // console.log("dc_resolve: inherited context:", pr._dc);
         return pr._dc;
     }
     if(pr._dc_shouldCopy) {
         pr._dc = Object.assign({}, dc_resolve(pr._dc_shouldCopy));
         delete pr._dc_shouldCopy;
-        console.log("dc_resolve: copied context:", pr._dc);
+        // console.log("dc_resolve: MALLOC: copied context:", pr._dc);
         return pr._dc;
     }
-    console.log("dc_resolve: creating new context");
+    // console.log("dc_resolve: MALLOC: creating new context: {}");
     return {};
 }
 
