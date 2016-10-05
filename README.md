@@ -14,16 +14,22 @@ See the [**bluebird website**](http://bluebirdjs.com/docs/getting-started.html) 
 
 Blackbird provides a mechanism for maintaining deep context through promise chains. This is like a "super" version of `Promise.bind` -- it provides an environment that is not only shared by the current promise chain, but also by any subchains consisting of Blackbird promises.
 
+We use deep context to store information collected in the top layers of our API (say, information about the currently logged-in user) so that it can be utilized seamlessly even by deep subsystems without worrying about lexical this or spaghetti argument passing.
+
+#### Spec
+
 The "deep context" of a promise is either:
 * The deep context of its preceding promise, if it is the result of `.then`ing another promise
 * The deep context of its parent promise, if it is the result of creating a promise while another promise is running.
 * An empty object, `{}`, otherwise.
 
+##### setDeepContext
 ```js
 Promise.setDeepContext(object) -> undefined
 ```
 Merges the given object (as if `Object.assign()`ed) with the deep context of the currently-running Promise.
 
+##### getDeepContext
 ```js
 Promise.getDeepContext() -> object
 ```
