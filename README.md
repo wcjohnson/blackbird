@@ -4,23 +4,25 @@
 </a>
 # Introduction
 
-Blackbird is a fork of Bluebird, which is a fully featured promise library with focus on innovative features and performance.
+Blackbird is a fork of Bluebird, which is a fully featured promise library with focus on innovative features and performance. Blackbird adds new functions on top of the Bluebird API, but does not remove any.
 
-See the [**bluebird website**](http://bluebirdjs.com/docs/getting-started.html) for further documentation, references and instructions. See the [**API reference**](http://bluebirdjs.com/docs/api-reference.html) here.
+Please see the [**bluebird website**](http://bluebirdjs.com/docs/getting-started.html) for further documentation, references and instructions. See the [**Bluebird API reference**](http://bluebirdjs.com/docs/api-reference.html) here.
 
 # Differences from Bluebird
 
 ## Deep Context
 
-Blackbird provides a mechanism for maintaining deep context through promise chains. This is like a "super" version of `Promise.bind` -- it provides an environment that is not only shared by the current promise chain, but also by any subchains consisting of Blackbird promises.
+Blackbird provides a mechanism for maintaining deep context through promise chains. This is like an omnipresent version of `Promise.bind()` -- it provides an environment that is not only shared by the current promise chain, but also by any subchains consisting of Blackbird promises.
 
-We use deep context to store information collected in the top layers of our API (say, information about the currently logged-in user) so that it can be utilized seamlessly even by deep subsystems without worrying about lexical this or spaghetti argument passing.
+We use deep context to store information collected in the top layers of our API (say, information about the currently logged-in user) as we call out to middleware layers that are themselves built on Blackbird promises.
+
+This allows all the contextual information to be utilized seamlessly even by deeply-nested subsystems without worrying about lexical this or spaghetti argument passing, which in turn makes the subsystems more reusable.
 
 #### Spec
 
 The "deep context" of a promise is either:
 * The deep context of its preceding promise, if it is the result of `.then`ing another promise
-* The deep context of its parent promise, if it is the result of creating a promise while another promise is running.
+* A clone of the deep context of its parent promise, if it is the result of creating a promise inside of another promise's handler.
 * An empty object, `{}`, otherwise.
 
 ##### setDeepContext
