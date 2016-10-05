@@ -28,10 +28,6 @@ function dc_peek() {
     }
 }
 
-// function randomID() {
-//     return Math.floor(Math.random() * 1000000);
-// }
-
 // On promise init, pull deep context from stack
 Promise.prototype._deepContextSetup = function() {
     // console.log("Promise._deepContextSetup");
@@ -44,6 +40,7 @@ Promise.prototype._deepContextSetup = function() {
 
 // Pass deep context on promise chaining.
 Promise.prototype._deepContextPass = function(other) {
+    delete other._dc_shouldCopy;
     if (this._dc) {
         console.log("_deepContextPass passing context", this._dc);
         other._dc = this._dc;
@@ -84,16 +81,17 @@ Promise._runningPromise = function() {
     return dc_peek();
 };
 
-// Allow inspection of deep context thru promise API.
+// Inspect the current deep context.
 Promise.getDeepContext = function() {
     return dc_resolve(dc_peek());
 };
 
+// Assign to the current deep context.
 Promise.setDeepContext = function(obj) {
     var runningPromise = dc_peek();
     // Makes no sense to set DC outside of a promise.
     if (!runningPromise) return;
-    // If we have a dc, assign here.
+    // Find DC and assign object to it.
     Object.assign(dc_resolve(runningPromise), obj);
 };
 
