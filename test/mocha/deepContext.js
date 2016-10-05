@@ -3,12 +3,8 @@
 var assert = require("assert");
 var testUtils = require("./helpers/util.js");
 
-var c = {
-    val: 3,
-    method: function() {
-        return [].slice.call(arguments).concat(this.val);
-    }
-};
+var helpers = require("./helpers/testThreeCases.js");
+var TypeError = Promise.TypeError;
 
 var getValues = function() {
     return {
@@ -17,48 +13,54 @@ var getValues = function() {
     };
 };
 
-describe("call", function() {
+describe("deepContext", function() {
     specify("basic then", function() {
-        console.log("******** Creating promise");
+        // console.log("******** Creating promise");
         var pr = Promise.resolve(true);
-        console.log("******** Thenning promise");
+        // console.log("******** Thenning promise");
         pr = pr.then(function() {
-            console.log("******** Promise.then 1", Promise.getDeepContext());
+            // console.log("******** Promise.then 1", Promise.getDeepContext());
             Promise.setDeepContext({ test1: 1});
-            console.log(Promise.getDeepContext());
+            assert.deepEqual(Promise.getDeepContext(), { test1: 1 });
+            // console.log(Promise.getDeepContext());
         });
-        console.log("******** Thenning promise 2nd time");
+        // console.log("******** Thenning promise 2nd time");
         pr = pr.then(function() {
-            console.log("******** Promise.then 2", Promise.getDeepContext());
+            // console.log("******** Promise.then 2", Promise.getDeepContext());
             Promise.setDeepContext({ test2: 2});
-            console.log(Promise.getDeepContext());
+            assert.deepEqual(Promise.getDeepContext(), { test1: 1, test2: 2 });
+            // console.log(Promise.getDeepContext());
         });
-        console.log("******** Thenning promise 3rd time");
+        // console.log("******** Thenning promise 3rd time");
         pr = pr.then(function(){
-            console.log("******** Promise.then 3", Promise.getDeepContext());
-        })
-        console.log("******** Thenning promise 4th time");
+            // console.log("******** Promise.then 3", Promise.getDeepContext());
+        });
+        // console.log("******** Thenning promise 4th time");
         pr = pr.then(function() {
-            console.log("******** Promise.then 4", Promise.getDeepContext());
-            console.log(Promise.getDeepContext());
-            console.log("******** Making subpromise");
-            new Promise(function(resolve, reject){
-                console.log("******** Subpromise executor");
+            // console.log("******** Promise.then 4", Promise.getDeepContext());
+            // console.log("******** Making subpromise");
+            new Promise(function(resolve){
+                // console.log("******** Subpromise executor");
                 Promise.setDeepContext({ test3: 3});
-                console.log(Promise.getDeepContext());
+                assert.deepEqual(Promise.getDeepContext(), { test1: 1, test2: 2, test3: 3 });
+                // console.log(Promise.getDeepContext());
                 resolve(1);
             }).then(function() {
-                console.log("******** Subpromise then", Promise.getDeepContext());
+                // console.log("******** Subpromise then", Promise.getDeepContext());
                 Promise.setDeepContext({ test4: 4});
-                console.log(Promise.getDeepContext());
+                assert.deepEqual(Promise.getDeepContext(), { test1: 1, test2: 2, test3: 3, test4: 4 });
+                // console.log(Promise.getDeepContext());
             });
 
-            console.log("******** Resolving external promise");
-            Promise.resolve(getValues().thenableFulfill).then(function() {
-                console.log("******** External promise then", Promise.getDeepContext());
+            // console.log("******** Resolving external promise");
+            var pr2 = Promise.resolve(getValues().thenableFulfill);
+            // console.log("******** Resolved external promise");
+            pr2.then(function() {
+                // console.log("******** External promise then", Promise.getDeepContext());
                 Promise.setDeepContext({ test5: 5});
-                console.log(Promise.getDeepContext());
-            })
+                assert.deepEqual(Promise.getDeepContext(), { test1: 1, test2: 2, test5: 5 });
+                // console.log(Promise.getDeepContext());
+            });
         });
     });
 });
