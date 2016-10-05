@@ -37,29 +37,47 @@ Promise.prototype._deepContextSetup = function() {
     // console.log("Promise._deepContextSetup");
     var runningPromise = dc_peek();
     if (runningPromise) {
-        this._dc = Object.assign({}, runningPromise._dc);
-        // console.log("-- cloned a deep context object", this._dc);
-    } else {
-        this._dc = {};
-        // console.log("-- created a deep context object", this._dc);
+        console.log("_deepContextSetup passing COPY instruction");
+        this._dc_shouldCopy = runningPromise;
     }
 };
 
 // Pass deep context on promise chaining.
 Promise.prototype._deepContextPass = function(other) {
-    // console.log("_deepContextPass passing context", other._dc, " to ", this._dc);
-    other._dc = this._dc;
+    if (this._dc) {
+        console.log("_deepContextPass passing context", this._dc);
+        other._dc = this._dc;
+    } else {
+        other._dc_shouldInherit = this;
+        console.log("_deepContextPass passing INHERIT instruction");
+    }
 };
 
 // Manage context stack when promise context is push/pop'd
 function dc_promisePushContext(pr) {
     dc_push(pr);
-    // console.log("promisePushedContext", deepContextStack);
 }
 
 function dc_promisePopContext() {
-    //console.log("promisePopContext", deepContextStack);
     dc_pop();
+}
+
+// Find the deep context of a promise.
+function dc_resolve(pr) {
+    if(pr._dc) return pr._dc;
+    if(pr._dc_shouldInherit) {
+        pr._dc = dc_resolve(pr._dc_shouldInherit);
+        delete pr._dc_shouldInherit;
+        return pr._dc;
+    }
+    if(pr._dc_shouldCopy) {
+        pr._dc = Object.assign({}, dc_resolve(pr._dc_shouldCopy));
+        delete pr._dc_shouldCopy;
+        console.log("dc_resolve: copied context:", pr._dc);
+        return pr._dc;
+    }
+    console.log("dc_resolve: creating new context");
+    return {};
 }
 
 Promise._runningPromise = function() {
@@ -68,17 +86,15 @@ Promise._runningPromise = function() {
 
 // Allow inspection of deep context thru promise API.
 Promise.getDeepContext = function() {
-    var runningPromise = dc_peek();
-    if (runningPromise) {
-        return runningPromise._dc;
-    }
+    return dc_resolve(dc_peek());
 };
 
 Promise.setDeepContext = function(obj) {
     var runningPromise = dc_peek();
-    if (runningPromise && runningPromise._dc) {
-        Object.assign(runningPromise._dc, obj);
-    }
+    // Makes no sense to set DC outside of a promise.
+    if (!runningPromise) return;
+    // If we have a dc, assign here.
+    Object.assign(dc_resolve(runningPromise), obj);
 };
 
 //////////////////////////// ORIGINAL BLUEBIRD CONTEXT

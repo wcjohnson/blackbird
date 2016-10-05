@@ -34,8 +34,12 @@ describe("call", function() {
             console.log(Promise.getDeepContext());
         });
         console.log("******** Thenning promise 3rd time");
-        pr = pr.then(function() {
+        pr = pr.then(function(){
             console.log("******** Promise.then 3", Promise.getDeepContext());
+        })
+        console.log("******** Thenning promise 4th time");
+        pr = pr.then(function() {
+            console.log("******** Promise.then 4", Promise.getDeepContext());
             console.log(Promise.getDeepContext());
             console.log("******** Making subpromise");
             new Promise(function(resolve, reject){
@@ -48,6 +52,13 @@ describe("call", function() {
                 Promise.setDeepContext({ test4: 4});
                 console.log(Promise.getDeepContext());
             });
+
+            console.log("******** Resolving external promise");
+            Promise.resolve(getValues().thenableFulfill).then(function() {
+                console.log("******** External promise then", Promise.getDeepContext());
+                Promise.setDeepContext({ test5: 5});
+                console.log(Promise.getDeepContext());
+            })
         });
     });
 });
