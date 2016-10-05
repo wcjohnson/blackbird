@@ -2,34 +2,39 @@
     <img src="http://promisesaplus.com/assets/logo-small.png" alt="Promises/A+ logo"
          title="Promises/A+ 1.1 compliant" align="right" />
 </a>
-[![Build Status](https://travis-ci.org/petkaantonov/bluebird.svg?branch=master)](https://travis-ci.org/petkaantonov/bluebird)
-[![coverage-98%](http://img.shields.io/badge/coverage-98%-brightgreen.svg?style=flat)](http://petkaantonov.github.io/bluebird/coverage/debug/index.html)
-
-**Got a question?** Join us on [stackoverflow](http://stackoverflow.com/questions/tagged/bluebird), the [mailing list](https://groups.google.com/forum/#!forum/bluebird-js) or chat on [IRC](https://webchat.freenode.net/?channels=#promises)
-
 # Introduction
 
-Bluebird is a fully featured promise library with focus on innovative features and performance
+Blackbird is a fork of Bluebird, which is a fully featured promise library with focus on innovative features and performance.
 
 See the [**bluebird website**](http://bluebirdjs.com/docs/getting-started.html) for further documentation, references and instructions. See the [**API reference**](http://bluebirdjs.com/docs/api-reference.html) here.
 
-For bluebird 2.x documentation and files, see the [2.x tree](https://github.com/petkaantonov/bluebird/tree/2.x).
+# Differences from Bluebird
 
-# Questions and issues
+## Deep Context
 
-The [github issue tracker](https://github.com/petkaantonov/bluebird/issues) is **_only_** for bug reports and feature requests. Anything else, such as questions for help in using the library, should be posted in [StackOverflow](http://stackoverflow.com/questions/tagged/bluebird) under tags `promise` and `bluebird`.
+Blackbird provides a mechanism for maintaining deep context through promise chains. This is like a "super" version of `Promise.bind` -- it provides an environment that is not only shared by the current promise chain, but also by any subchains consisting of Blackbird promises.
 
+The "deep context" of a promise is either:
+* The deep context of its preceding promise, if it is the result of `.then`ing another promise
+* The deep context of its parent promise, if it is the result of creating a promise while another promise is running.
+* An empty object, `{}`, otherwise.
 
+```js
+Promise.setDeepContext(object) -> undefined
+```
+Merges the given object (as if `Object.assign()`ed) with the deep context of the currently-running Promise.
 
-## Thanks
-
-Thanks to BrowserStack for providing us with a free account which lets us support old browsers like IE8. 
+```js
+Promise.getDeepContext() -> object
+```
+Gets the deep context of the currently-running Promise. The deep context should be treated as immutable; use `.setDeepContext` to modify it.
 
 # License
 
 The MIT License (MIT)
 
 Copyright (c) 2013-2016 Petka Antonov
+Copyright (c) 2016 William C. Johnson
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -48,4 +53,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-
