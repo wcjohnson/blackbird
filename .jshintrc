@@ -17,7 +17,7 @@
     "unused": true,
     "strict": false,
     "maxparams": 6,
-    "maxlen": 80,
+    "maxlen": false,
     "asi": false,
     "boss": true,
     "eqnull": true,
