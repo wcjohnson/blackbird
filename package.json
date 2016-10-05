@@ -1,6 +1,6 @@
 {
-  "name": "bluebird",
-  "description": "Full featured Promises/A+ implementation with exceptionally good performance",
+  "name": "blackbird-promises",
+  "description": "A fork of bluebird, which is a full featured Promises/A+ implementation with exceptionally good performance",
   "version": "3.4.6",
   "keywords": [
     "promise",
@@ -25,20 +25,25 @@
     "generate-browser-full": "node tools/build.js --no-clean --no-debug --release --browser --minify",
     "generate-browser-core": "node tools/build.js --features=core --no-debug --release --zalgo --browser --minify && mv js/browser/bluebird.js js/browser/bluebird.core.js && mv js/browser/bluebird.min.js js/browser/bluebird.core.min.js"
   },
-  "homepage": "https://github.com/petkaantonov/bluebird",
+  "homepage": "https://github.com/wcjohnson/blackbird",
   "repository": {
     "type": "git",
-    "url": "git://github.com/petkaantonov/bluebird.git"
+    "url": "git://github.com/wcjohnson/blackbird.git"
   },
   "bugs": {
-    "url": "http://github.com/petkaantonov/bluebird/issues"
+    "url": "http://github.com/wcjohnson/blackbird/issues"
   },
   "license": "MIT",
-  "author": {
-    "name": "Petka Antonov",
-    "email": "petka_antonov@hotmail.com",
-    "url": "http://github.com/petkaantonov/"
-  },
+  "contributors": [
+    {
+      "name": "Petka Antonov",
+      "url": "http://github.com/petkaantonov/"
+    },
+    {
+      "name": "William C. Johnson",
+      "url": "http://github.com/wcjohnson"
+    }
+  ],
   "devDependencies": {
     "acorn": "~0.6.0",
     "baconjs": "^0.7.43",
