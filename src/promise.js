@@ -73,6 +73,7 @@ function Promise(executor) {
     this._rejectionHandler0 = undefined;
     this._promise0 = undefined;
     this._receiver0 = undefined;
+    this._deepContextSetup();
     if (executor !== INTERNAL) {
         check(this, executor);
         this._resolveFromExecutor(executor);
@@ -240,6 +241,7 @@ Promise.prototype._then = function (
                 receiver = target === this ? undefined : this._boundTo;
             }
         }
+        this._deepContextPass(promise);
         this._fireEvent("promiseChained", this, promise);
     }
 
