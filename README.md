@@ -22,7 +22,7 @@ This allows all the contextual information to be utilized seamlessly even by dee
 
 The "deep context" of a promise is either:
 * The deep context of its preceding promise, if it is the result of `.then`ing another promise
-* A clone of the deep context of its parent promise, if it is the result of creating a promise inside of another promise's handler.
+* A __shallow copy__ of the deep context of its parent promise, if it is the result of creating a promise inside of another promise's handler.
 * An empty object, `{}`, otherwise.
 
 ##### setDeepContext
